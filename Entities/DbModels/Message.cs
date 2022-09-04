@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -10,7 +11,7 @@ public class Message
     public User UserFrom { get; set; }
     
     public string UserFromId { get; set; }
-
+    
     public User UserTo { get; set; }
     
     public string UserToId { get; set; }
@@ -27,7 +28,7 @@ public class MessageConfiguration : IEntityTypeConfiguration<Message>
         item.HasOne(r => r.UserFrom)
             .WithMany(r => r.MessagesFrom)
             .HasForeignKey(r => r.UserFromId);
-
+        
         item.HasOne(r => r.UserTo)
             .WithMany(r => r.MessagesTo)
             .HasForeignKey(r => r.UserToId);

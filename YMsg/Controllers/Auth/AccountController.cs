@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using AutoMapper;
+using Common.Constants;
 using Common.Helpers;
 using Entities.DataTransferObjects;
 using Entities.DbModels;
@@ -14,10 +15,9 @@ using YMsg.Models.RequestModels;
 using YMsg.Models.ResponseModels;
 using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
 
-namespace YMsg.Controllers;
+namespace YMsg.Controllers.Auth;
 
 [ApiController]
-[Route("[controller]/[action]")]
 public class AccountController : ControllerBase
 {
     private readonly UserManager<User> _userManager;
@@ -38,6 +38,7 @@ public class AccountController : ControllerBase
     }
 
     [HttpPost]
+    [Route("api/login")]
     public async Task<IActionResult> Login([FromBody] LoginRequest model)
     {
         var user = await _userManager.FindByNameAsync(model.Username);
@@ -68,7 +69,7 @@ public class AccountController : ControllerBase
 
             user.RefreshToken = refreshToken;
             user.RefreshTokenExpiryTime = DateTime.Now.AddDays(refreshTokenValidityInDays);
-
+            await _userManager.UpdateAsync(user);
 
             return Ok(new TokenResponse()
             {
@@ -83,6 +84,7 @@ public class AccountController : ControllerBase
     }
 
     [HttpPost]
+    [Route("api/register")]
     public async Task<IActionResult> Register([FromBody] RegisterRequest model)
     {
         var userExists = await _userManager.FindByNameAsync(model.Username);
@@ -97,11 +99,28 @@ public class AccountController : ControllerBase
             UserName = model.Username,
             DisplayName = model.DisplayName
         };
+        
+        if (!await _roleManager.RoleExistsAsync(UserRoles.Admin))
+        {
+            await _roleManager.CreateAsync(new IdentityRole(UserRoles.Admin));
+        }
+        if (!await _roleManager.RoleExistsAsync(UserRoles.User))
+        {
+            await _roleManager.CreateAsync(new IdentityRole(UserRoles.User));
+        }
+        
         var result = await _userManager.CreateAsync(user, model.Password);
+       
         if (!result.Succeeded)
         {
             return StatusCode(StatusCodes.Status500InternalServerError,
                 "User creation failed! Please check user details and try again");
+        }
+        result= await _userManager.AddToRoleAsync(user, UserRoles.User);
+        if (!result.Succeeded)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError,
+                "User role setting failed! Please check user details and try again");
         }
 
         return Ok(_mapper.Map<UserDto>(user));
@@ -116,7 +135,7 @@ public class AccountController : ControllerBase
         var token = new JwtSecurityToken(
             issuer: _configuration["JWT:ValidIssuer"],
             audience: _configuration["JWT:ValidAudience"],
-            expires: (DateTime.UtcNow-UtcOffsetHelper.UtcOffset).AddMinutes(tokenValidityInMinutes),
+            expires: (DateTime.Now/*DateTime.UtcNow-UtcOffsetHelper.UtcOffset*/).AddMinutes(tokenValidityInMinutes),
             claims: authClaims,
             signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
         );
@@ -125,6 +144,7 @@ public class AccountController : ControllerBase
     }
     
     [HttpPost]
+    [Route("api/refresh")]
     public async Task<IActionResult> RefreshToken(RefreshTokenRequest tokenModel)
     {
         if (tokenModel is null)
@@ -167,6 +187,7 @@ public class AccountController : ControllerBase
     
     [Authorize]
     [HttpPost]
+    [Route("api/revoke")]
     public async Task<IActionResult> Revoke(string username)
     {
         var user = await _userManager.FindByNameAsync(username);

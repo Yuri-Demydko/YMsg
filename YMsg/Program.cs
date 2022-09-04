@@ -1,17 +1,33 @@
 using System.Text;
+using System.Text.Json.Serialization;
 using Entities;
 using Entities.DataTransferObjects;
 using Entities.DbModels;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.OData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using YMsg.Models.Edm;
+using Newtonsoft.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+
+builder.Services
+    .AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler=ReferenceHandler.IgnoreCycles;
+        
+    })
+    .AddOData(options => options
+        .AddRouteComponents("odata", AppEdmModel.GetEdmModel())
+        .EnableQueryFeatures()
+         .SetMaxTop(100)
+    );
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
 var env = builder.Environment;
@@ -75,9 +91,18 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+ app.UseRouting();
+    // app.UseEndpoints(endpoints =>
+    // {
+    //     endpoints.MapODataRoute("odata", "odata", AppEdmModel.GetEdmModel());
+    // });
+
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllers();
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers();
+});
 
 app.Run();
