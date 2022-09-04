@@ -9,11 +9,11 @@ public class Message
     
     public User UserFrom { get; set; }
     
-    public Guid UserFromId { get; set; }
+    public string UserFromId { get; set; }
 
     public User UserTo { get; set; }
     
-    public Guid UserToId { get; set; }
+    public string UserToId { get; set; }
     
     public string Text { get; set; }
     
