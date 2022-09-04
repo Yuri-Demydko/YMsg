@@ -13,11 +13,4 @@ public class AppDbContext:IdentityDbContext<User>
     {
         base.OnModelCreating(builder);
     }
-    
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        string connectionString = ConfigurationManager.ConnectionStrings["Default"].ConnectionString;
-
-        optionsBuilder.UseNpgsql(connectionString);
-    }
 }
