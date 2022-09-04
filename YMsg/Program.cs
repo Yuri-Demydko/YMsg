@@ -1,5 +1,6 @@
 using System.Text;
 using Entities;
+using Entities.DataTransferObjects;
 using Entities.DbModels;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -54,7 +55,10 @@ builder.Services.AddAuthentication(options =>
         };
     });
 
-
+builder.Services.AddAutoMapper(map =>
+{
+    map.CreateMap<User, UserDto>();
+});
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
