@@ -13,8 +13,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
+var env = builder.Environment;
 var configuration = builder.Configuration;
-
 // For Entity Framework
 builder.Services.AddDbContext<AppDbContext>(options => options
     .UseNpgsql(configuration.GetConnectionString("Default")));
