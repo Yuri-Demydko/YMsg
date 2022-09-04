@@ -1,4 +1,4 @@
-﻿namespace Common;
+﻿namespace Common.Constants;
 
 public class UserRoles
 {

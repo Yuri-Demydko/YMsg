@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using AutoMapper;
+using Common.Helpers;
 using Entities.DataTransferObjects;
 using Entities.DbModels;
 using Microsoft.AspNetCore.Authorization;
@@ -115,7 +116,7 @@ public class AccountController : ControllerBase
         var token = new JwtSecurityToken(
             issuer: _configuration["JWT:ValidIssuer"],
             audience: _configuration["JWT:ValidAudience"],
-            expires: DateTime.Now.AddMinutes(tokenValidityInMinutes),
+            expires: (DateTime.UtcNow-UtcOffsetHelper.UtcOffset).AddMinutes(tokenValidityInMinutes),
             claims: authClaims,
             signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
         );
@@ -166,7 +167,6 @@ public class AccountController : ControllerBase
     
     [Authorize]
     [HttpPost]
-    [Route("[controller]/[action]/{username}")]
     public async Task<IActionResult> Revoke(string username)
     {
         var user = await _userManager.FindByNameAsync(username);
