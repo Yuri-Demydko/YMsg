@@ -1,0 +1,7 @@
+bin/
+obj/
+/packages/
+riderModule.iml
+/_ReSharper.Caches/
+.idea/.idea.YMsg/.idea/vcs.xml
+.idea/.idea.YMsg/.idea/indexLayout.xml
