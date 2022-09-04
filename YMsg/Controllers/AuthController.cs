@@ -63,7 +63,6 @@ public class AuthController : ControllerBase
         }
 
         [HttpPost]
-        [Route("register")]
         public async Task<IActionResult> Register([FromBody] RegisterRequest model)
         {
             var userExists = await _userManager.FindByNameAsync(model.Username);
