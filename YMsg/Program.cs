@@ -16,7 +16,8 @@ builder.Services.AddControllers();
 var configuration = builder.Configuration;
 
 // For Entity Framework
-builder.Services.AddDbContextFactory<AppDbContext>();
+builder.Services.AddDbContext<AppDbContext>(options => options
+    .UseNpgsql(configuration.GetConnectionString("Default")));
 
 // For Identity
 builder.Services.AddIdentity<User, IdentityRole>()
