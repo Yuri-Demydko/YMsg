@@ -24,7 +24,7 @@ builder.Services
         
     })
     .AddOData(options => options
-        .AddRouteComponents("odata", AppEdmModel.GetEdmModel())
+        .AddRouteComponents("api", AppEdmModel.GetEdmModel())
         .EnableQueryFeatures()
          .SetMaxTop(100)
     );

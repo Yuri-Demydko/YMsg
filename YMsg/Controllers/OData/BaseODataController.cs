@@ -13,7 +13,7 @@ using YMsg.Models.Edm;
 namespace YMsg.Controllers.OData;
 
 [Authorize]
-[Route("odata")]
+[Route("api")]
 public abstract class BaseODataController<TModel>:ODataController
 {
     protected readonly ILogger<TModel> _logger;

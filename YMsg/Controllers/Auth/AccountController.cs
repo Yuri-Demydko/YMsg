@@ -38,7 +38,7 @@ public class AccountController : ControllerBase
     }
 
     [HttpPost]
-    [Route("api/login")]
+    [Route("auth/login")]
     public async Task<IActionResult> Login([FromBody] LoginRequest model)
     {
         var user = await _userManager.FindByNameAsync(model.Username);
@@ -84,7 +84,7 @@ public class AccountController : ControllerBase
     }
 
     [HttpPost]
-    [Route("api/register")]
+    [Route("auth/register")]
     public async Task<IActionResult> Register([FromBody] RegisterRequest model)
     {
         var userExists = await _userManager.FindByNameAsync(model.Username);
@@ -144,7 +144,7 @@ public class AccountController : ControllerBase
     }
     
     [HttpPost]
-    [Route("api/refresh")]
+    [Route("auth/refresh")]
     public async Task<IActionResult> RefreshToken(RefreshTokenRequest tokenModel)
     {
         if (tokenModel is null)
@@ -187,7 +187,7 @@ public class AccountController : ControllerBase
     
     [Authorize]
     [HttpPost]
-    [Route("api/revoke")]
+    [Route("auth/revoke")]
     public async Task<IActionResult> Revoke(string username)
     {
         var user = await _userManager.FindByNameAsync(username);
