@@ -13,7 +13,8 @@ public class PingController:ControllerBase
         return Ok(new
         {
             Message = "YMsg - Hello",
-            Today = DateTime.Now
+            Today = DateTime.Now,
+            IP = Request.HttpContext.Connection.RemoteIpAddress
         });
     }
     
