@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using YMsg.Models.ResponseModels;
 
 namespace YMsg.Controllers.Ping;
 
@@ -10,10 +11,10 @@ public class PingController:ControllerBase
     [AllowAnonymous]
     public IActionResult Ping()
     {
-        return Ok(new
+        return Ok(new PingResponse()
         {
             Message = "YMsg - Hello",
-            Today = DateTime.Now
+            CurrentServerDateTime = DateTime.Now
         });
     }
     
