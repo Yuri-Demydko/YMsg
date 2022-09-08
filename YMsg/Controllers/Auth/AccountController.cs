@@ -44,7 +44,7 @@ public class AccountController : ControllerBase
         var user = await _userManager.FindByNameAsync(model.Username);
         if (user == null)
         {
-            return BadRequest($"User {model.Username} doesn't exist");
+            return NotFound($"User {model.Username} doesn't exist");
         }
 
         if (await _userManager.CheckPasswordAsync(user, model.Password))

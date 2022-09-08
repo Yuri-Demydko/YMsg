@@ -33,10 +33,13 @@ public class MessagesController : BaseODataController<Message>
     [HttpGet("Messages({key})")]
     public async Task<IActionResult> Get(Guid key)
     {
+        var userId = (await GetUserModelAsync()).Id;
         var item = await _context.Messages
            .IncludeOptimized(r => r.UserTo)
            .IncludeOptimized(r => r.UserFrom)
-           .FirstOrDefaultAsync(r => r.Id == key);
+           .FirstOrDefaultAsync(r => r.Id == key&&
+                                     r.UserFromId==userId||
+                                     r.UserToId==userId);
 
         return item != null ? Ok(item) : NotFound();
     }
