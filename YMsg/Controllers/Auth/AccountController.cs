@@ -158,7 +158,7 @@ public class AccountController : ControllerBase
         var principal = GetPrincipalFromExpiredToken(accessToken);
         if (principal == null)
         {
-            return BadRequest("Invalid access token or refresh token");
+            return NotFound("Invalid access token or refresh token");
         }
         
         string username = principal.Identity!.Name!;
@@ -167,7 +167,7 @@ public class AccountController : ControllerBase
 
         if (user == null || user.RefreshToken != refreshToken || user.RefreshTokenExpiryTime <= DateTime.Now)
         {
-            return BadRequest("Invalid access token or refresh token");
+            return NotFound("Invalid access token or refresh token");
         }
 
         var newAccessToken = CreateToken(principal.Claims.ToList());
