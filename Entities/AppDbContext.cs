@@ -11,10 +11,10 @@ public class AppDbContext:IdentityDbContext<User>
     
     public DbSet<CacheDbSchemaUpdate> CacheDbSchemaUpdates { get; set; }
 
-    public AppDbContext() : base()
-    {
-        
-    }
+    // public AppDbContext() : base()
+    // {
+    //     
+    // }
     
 
     public AppDbContext(DbContextOptions options) : base(options) { }
@@ -42,10 +42,10 @@ public class AppDbContext:IdentityDbContext<User>
     
     
     
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-       // base.OnConfiguring(optionsBuilder);
-        optionsBuilder.UseNpgsql(
-            "Host=ymsg-db.cvt8etkjrnau.eu-central-1.rds.amazonaws.com;Port=5432;Database=postgres;Username=crm;Password=1OkLJAd1l81atR2cUbic;CommandTimeout=1000;Convert Infinity DateTime=true");
-    }
+    // protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    // {
+    //    // base.OnConfiguring(optionsBuilder);
+    //     optionsBuilder.UseNpgsql(
+    //         "");
+    // }
 }
