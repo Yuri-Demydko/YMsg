@@ -18,7 +18,7 @@ using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegiste
 namespace YMsg.Controllers.Auth;
 
 [ApiController]
-public class AccountController : ControllerBase
+public class AuthController : ControllerBase
 {
     private readonly UserManager<User> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;
@@ -26,7 +26,7 @@ public class AccountController : ControllerBase
     private readonly IMapper _mapper;
 
 
-    public AccountController(
+    public AuthController(
         UserManager<User> userManager,
         RoleManager<IdentityRole> roleManager,
         IConfiguration configuration, IMapper mapper)
@@ -42,7 +42,7 @@ public class AccountController : ControllerBase
     public async Task<IActionResult> Login([FromBody] LoginRequest model)
     {
         var user = await _userManager.FindByNameAsync(model.Username);
-        if (user == null)
+        if (user?.UserName == null)
         {
             return NotFound($"User {model.Username} doesn't exist");
         }
@@ -92,6 +92,12 @@ public class AccountController : ControllerBase
         {
             return BadRequest($"User {model.Username} already exists");
         }
+
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+        
 
         User user = new()
         {

@@ -1,3 +1,4 @@
+using Entities.DataTransferObjects;
 using Entities.DbModels;
 using Microsoft.OData.Edm;
 using Microsoft.OData.ModelBuilder;
@@ -11,6 +12,7 @@ public class AppEdmModel
         var modelBuilder = new ODataConventionModelBuilder();
         modelBuilder.EntitySet<User>("Users");
         modelBuilder.EntitySet<Message>("Messages");
+        modelBuilder.EntitySet<UserDto>("UserDto");
         
         // Send as Lower Camel Case Properties, so the JSON looks better:
         modelBuilder.EnableLowerCamelCase();

@@ -1,10 +1,12 @@
 using AutoMapper;
 using Common.Constants;
 using Entities;
+using Entities.DataTransferObjects;
 using Entities.DbModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Deltas;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.EntityFrameworkCore;
 using Z.EntityFramework.Plus;
@@ -19,6 +21,7 @@ public class UsersController : BaseODataController<User>
         configuration, mapper, context)
     {
     }
+    
 
     [EnableQuery]
     [HttpGet("Users")]
@@ -43,6 +46,7 @@ public class UsersController : BaseODataController<User>
 
         return item != null ? Ok(item) : NotFound();
     }
+
 
     [HttpDelete("Users({key})")]
     public async Task<IActionResult> Delete(Guid key)
