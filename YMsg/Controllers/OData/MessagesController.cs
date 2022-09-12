@@ -11,7 +11,6 @@ using Z.EntityFramework.Plus;
 
 namespace YMsg.Controllers.OData;
 
-[Authorize(Roles = UserRoles.Admin)]
 public class MessagesController : BaseODataController<Message>
 {
     public MessagesController(ILogger<Message> logger, UserManager<User> userManager, RoleManager<IdentityRole> roleManager,
@@ -22,24 +21,34 @@ public class MessagesController : BaseODataController<Message>
 
     [EnableQuery]
     [HttpGet("Messages")]
-    public IActionResult Get()
+    public async Task<IActionResult> Get()
     {
-        return Ok(_context.Messages.IgnoreAutoIncludes()
+        var items= _context.Messages.IgnoreAutoIncludes()
             .IncludeOptimized(r => r.UserTo)
-            .IncludeOptimized(r => r.UserFrom));
+            .IncludeOptimized(r => r.UserFrom);
+
+        var user = await GetUserModelAsync();
+        if (!await _userManager.IsInRoleAsync(user, UserRoles.Admin))
+        {
+            items = items.Where(r => r.UserFromId == user.Id || r.UserToId == user.Id);
+        }
+
+        return Ok(items);
     }
 
     [EnableQuery]
     [HttpGet("Messages({key})")]
     public async Task<IActionResult> Get(Guid key)
     {
-        var userId = (await GetUserModelAsync()).Id;
+        var user = (await GetUserModelAsync());
+        var isAdmin = await _userManager.IsInRoleAsync(user, UserRoles.Admin);
         var item = await _context.Messages
            .IncludeOptimized(r => r.UserTo)
            .IncludeOptimized(r => r.UserFrom)
            .FirstOrDefaultAsync(r => r.Id == key&&
-                                     r.UserFromId==userId||
-                                     r.UserToId==userId);
+                                     (r.UserFromId == user.Id ||
+                                      r.UserToId == user.Id)
+                                     ||isAdmin);
 
         return item != null ? Ok(item) : NotFound();
     }
@@ -62,8 +71,12 @@ public class MessagesController : BaseODataController<Message>
     [HttpDelete("Messages({key})")]
     public async Task<IActionResult> Delete(Guid key)
     {
+        var user = (await GetUserModelAsync());
+        var isAdmin = await _userManager.IsInRoleAsync(user, UserRoles.Admin);
         var item = await _context.Messages
-            .FirstOrDefaultAsync(r => r.Id == key);
+            .FirstOrDefaultAsync(r => r.Id == key && 
+                (r.UserFromId == user.Id ||
+                 r.UserToId == user.Id) || isAdmin);
 
         if (item == null)
         {
