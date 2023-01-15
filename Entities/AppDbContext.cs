@@ -11,10 +11,10 @@ public class AppDbContext:IdentityDbContext<User>
     
     public DbSet<CacheDbSchemaUpdate> CacheDbSchemaUpdates { get; set; }
 
-    // public AppDbContext() : base()
-    // {
-    //     
-    // }
+    public AppDbContext() : base()
+    {
+        
+    }
     
 
     public AppDbContext(DbContextOptions options) : base(options) { }
@@ -42,10 +42,9 @@ public class AppDbContext:IdentityDbContext<User>
     
     
     
-    // protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    // {
-    //    // base.OnConfiguring(optionsBuilder);
-    //     optionsBuilder.UseNpgsql(
-    //         "");
-    // }
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        base.OnConfiguring(optionsBuilder);
+        optionsBuilder.UseNpgsql();
+    }
 }
