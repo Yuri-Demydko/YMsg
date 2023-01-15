@@ -35,8 +35,8 @@ builder.Services
 
 var configuration = builder.Configuration;
 
-if (env.IsProduction())
-    builder.Configuration.AddJsonFile("secret.appsettings.json");
+// if (env.IsProduction())
+//     builder.Configuration.AddJsonFile("secret.appsettings.json");
 
 // For Entity Framework
 builder.Services.AddDbContext<AppDbContext>(options => options
