@@ -9,9 +9,11 @@ using Microsoft.AspNetCore.OData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using YMsg.Models.Edm;
-using Newtonsoft.Json;
 
-var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication
+    .CreateBuilder(args);
+
+var env = builder.Environment;
 
 // Add services to the container.
 
@@ -30,8 +32,12 @@ builder.Services
     );
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
-var env = builder.Environment;
+
 var configuration = builder.Configuration;
+
+if (env.IsProduction())
+    builder.Configuration.AddJsonFile("secret.appsettings.json");
+
 // For Entity Framework
 builder.Services.AddDbContext<AppDbContext>(options => options
     .UseNpgsql(configuration.GetConnectionString("Default")));
